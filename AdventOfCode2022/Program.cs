@@ -101,11 +101,11 @@ Console.ForegroundColor = ConsoleColor.DarkGreen;
 Console.WriteLine("Day 8");
 
 var resultd8e1 = Day8.GetAmountOfVisbleTrees();
-//var resultd8e2 = Day8.GetSizeOfDirectoryToDelete(30000000);
+var resultd8e2 = Day8.GetMostScenicTreePosition();
 
 Console.ForegroundColor = ConsoleColor.White;
 Console.WriteLine($"Result 1: {resultd8e1}");
-//Console.WriteLine($"Result 2: {resultd8e2}\n");
+Console.WriteLine($"Result 2: {resultd8e2}\n");
 #endregion
 
 Console.ReadLine();

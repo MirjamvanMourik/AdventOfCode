@@ -1,194 +1,236 @@
-﻿using AdventOfCode2022.Extras;
-using AdventOfCode2022.Input;
+﻿using AdventOfCode2022.Input;
 using AdventOfCode2022.Shared;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace AdventOfCode2022.Days
 {
     public class Day8
     {
-        private static readonly Day8Tree firstTree = new();
-        private static Day8Tree currentTree = new();
+        private static List<List<int>> forest = new();
 
         public static int GetAmountOfVisbleTrees()
         {
-            //var trees = Day8Trees.Input;
-            var treesInput = @"30373
+            var treesInput = Day8Trees.Input;
+            var treesInput2 = @"30373
 25512
 65332
 33549
 35390";
 
             var trees = Splitter.SplitInput(treesInput);
-            var splitTrees = SplitTrees(trees);
+            forest = SplitTrees(trees);
 
-            CreateForest(splitTrees);
+            var visibleTreesCount = 0;
 
-            currentTree = firstTree;
-
-            for (var i = 0; i < splitTrees.Count; i++)
+            for (var i = 0; i < forest.Count; i++)
             {
-                var rowOfTrees = string.Empty;
-
-                for (var j = 0; j < splitTrees[i].Count; j++)
+                for (var j = 0; j < forest[i].Count; j++)
                 {
-                    rowOfTrees += currentTree.Height;
-
-                    if (j == splitTrees[i].Count - 1)
+                    if (IsTreeVisible(forest[i][j], i, j))
                     {
-                        currentTree = firstTree;
-
-                        for (var a = 0; a < i + 1; a++)
-                        {
-                            currentTree = currentTree.Down;
-                        }
-
-                        continue;
-                    }
-
-                    Console.WriteLine(rowOfTrees);
-
-                    GoRight(1);
-                }
-            }
-
-            return 0;
-        }
-
-        private static void CreateForest(List<List<int>> splitTrees)
-        {
-            for (var i = 0; i < splitTrees.Count; i++)
-            {
-                for (var j = 0; j < splitTrees[i].Count; j++)
-                {
-                    if (i == 0 && j == 0)
-                    {
-                        currentTree = firstTree;
-
-                        firstTree.Height = splitTrees[i][j];
-                        firstTree.Right = new Day8Tree
-                        {
-                            Height = splitTrees[i][j+1],
-                            Left = firstTree
-                        };
-                        firstTree.Down = new Day8Tree
-                        {
-                            Height = splitTrees[i + 1][j],
-                            Up = firstTree
-                        };
-
-                        currentTree = currentTree.Right;
-                        continue;
-                    }
-
-                    if (i != splitTrees.Count - 1 && j != splitTrees[i].Count - 1) 
-                    {
-                        currentTree.Right = new Day8Tree
-                        {
-                            Height = splitTrees[i][j + 1],
-                            Left = currentTree
-                        };
-                        currentTree.Down = new Day8Tree
-                        {
-                            Height = splitTrees[i + 1][j],
-                            Up = currentTree
-                        };
-
-                        currentTree = currentTree.Right;
-                        continue;
-                    }
-
-                    if (j == splitTrees[i].Count - 1 && i != splitTrees.Count - 1)
-                    {
-                        currentTree.Down = new Day8Tree
-                        {
-                            Height = splitTrees[i + 1][j],
-                            Up = currentTree
-                        };
-
-                        currentTree = firstTree;
-
-                        for (var a = 0; a < i + 1; a++)
-                        {
-                            currentTree = currentTree.Down;
-                        }
-
-                        continue;
+                        visibleTreesCount++;
                     }
                 }
             }
+
+            return visibleTreesCount;
         }
 
-        private static void GoRight(int amountOfSteps)
+        public static int GetMostScenicTreePosition()
         {
-            if (amountOfSteps != 0)
+            var treesInput = Day8Trees.Input;
+            var treesInput2 = @"30373
+25512
+65332
+33549
+35390";
+
+            var trees = Splitter.SplitInput(treesInput);
+            forest = SplitTrees(trees);
+
+            var mostScenicTreeScore = 0;
+
+            for (var i = 0; i < forest.Count; i++)
             {
-                if (currentTree.Right == null)
+                for (var j = 0; j < forest[i].Count; j++)
                 {
-                    throw new ArgumentException("You can't go right here.");
+                    if (GetScenicTreeScore(forest[i][j], i, j) > mostScenicTreeScore)
+                    {
+                        mostScenicTreeScore = GetScenicTreeScore(forest[i][j], i, j);
+                    }
+                }
+            }
+
+            return mostScenicTreeScore;
+        }
+
+        private static int GetScenicTreeScore(int height, int row, int column)
+        {
+            var scores = new List<int>();
+            var hasHigherTree = false;
+
+            // Up
+            for (var i = row - 1; i >= 0; i--)
+            {
+                if (forest[i][column] >= height)
+                {
+                    scores.Add(row - i);
+                    hasHigherTree = true;
+                    break;
+                }
+            }
+
+            if (!hasHigherTree)
+            {
+                scores.Add(row);
+            }
+            else
+            {
+                hasHigherTree = false;
+            }
+
+            // Down
+            for (var i = row + 1; i < forest.Count; i++)
+            {
+                if (forest[i][column] >= height)
+                {
+                    scores.Add(i - row);
+                    hasHigherTree = true;
+                    break;
+                }
+            }
+
+            if (!hasHigherTree)
+            {
+                scores.Add((forest.Count - 1) - row);
+            }
+            else
+            {
+                hasHigherTree = false;
+            }
+
+            // Left
+            for (var i = column - 1; i >= 0; i--)
+            {
+                if (forest[row][i] >= height)
+                {
+                    scores.Add(column - i);
+                    hasHigherTree = true;
+                    break;
+                }
+            }
+
+            if (!hasHigherTree)
+            {
+                scores.Add(column);
+            }
+            else
+            {
+                hasHigherTree = false;
+            }
+
+            // Right
+            for (var i = column + 1; i < forest[row].Count; i++)
+            {
+                if (forest[row][i] >= height)
+                {
+                    scores.Add(i - column);
+                    hasHigherTree = true;
+                    break;
+                }
+            }
+
+            if (!hasHigherTree)
+            {
+                scores.Add((forest[row].Count - 1) - column);
+            }
+
+            // Calculate scenic score
+            var calculatedScore = 0;
+            for (var i = 0; i < scores.Count; i++)
+            {
+                if (i == 0)
+                {
+                    calculatedScore = scores[i];
                 }
                 else
                 {
-                    currentTree = currentTree.Right;
-
-                    GoRight(amountOfSteps - 1);
+                    calculatedScore *= scores[i];
                 }
             }
+
+            return calculatedScore;
         }
 
-        private static void GoLeft(int amountOfSteps)
+        public static bool IsTreeVisible(int height, int row, int column)
         {
-            if (amountOfSteps != 0)
+            if (row == 0 || row == forest.Count - 1 || column == 0 || column == forest[row].Count - 1)
             {
-                if (currentTree.Left == null)
-                {
-                    throw new ArgumentException("You can't go left here.");
-                }
-                else
-                {
-                    currentTree = currentTree.Left;
-
-                    GoLeft(amountOfSteps - 1);
-                }
+                return true;
             }
+
+            if (!HasLargerTreeInLeftRow(height, row, column)
+                || !HasLargerTreeInRightRow(height, row, column)
+                || !HasLargerTreeInUpperColumn(height, row, column)
+                || !HasLargerTreeILowerColumn(height, row, column))
+            {
+                return true;
+            }
+
+            return false;
         }
 
-        private static void GoDown(int amountOfSteps)
+        private static bool HasLargerTreeInLeftRow(int height, int row, int column)
         {
-            if (amountOfSteps != 0)
+            for (var i = 0; i < row; i++)
             {
-                if (currentTree.Down == null)
+                if (forest[i][column] >= height)
                 {
-                    throw new ArgumentException("You can't go down here.");
-                }
-                else
-                {
-                    currentTree = currentTree.Down;
-
-                    GoDown(amountOfSteps - 1);
+                    return true;
                 }
             }
+
+            return false;
         }
 
-        private static void GoUp(int amountOfSteps)
+        private static bool HasLargerTreeInRightRow(int height, int row, int column)
         {
-            if (amountOfSteps != 0)
+            for (var i = forest.Count - 1; i > row; i--)
             {
-                if (currentTree.Up == null)
+                if (forest[i][column] >= height)
                 {
-                    throw new ArgumentException("You can't go up here.");
-                }
-                else
-                {
-                    currentTree = currentTree.Up;
-
-                    GoUp(amountOfSteps - 1);
+                    return true;
                 }
             }
+
+            return false;
+        }
+
+        private static bool HasLargerTreeInUpperColumn(int height, int row, int column)
+        {
+            for (var i = 0; i < column; i++)
+            {
+                if (forest[row][i] >= height)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HasLargerTreeILowerColumn(int height, int row, int column)
+        {
+            for (var i = forest[row].Count - 1; i > column; i--)
+            {
+                if (forest[row][i] >= height)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static List<List<int>> SplitTrees(string[] trees)
