@@ -108,4 +108,17 @@ Console.WriteLine($"Result 1: {resultd8e1}");
 Console.WriteLine($"Result 2: {resultd8e2}\n");
 #endregion
 
+#region Day9
+// Day 9
+Console.ForegroundColor = ConsoleColor.DarkGreen;
+Console.WriteLine("Day 9");
+
+var resultd9e1 = Day9.GetAmountOfVisitedPositionsForTail();
+var resultd9e2 = Day9a2.GetAmountOfVisitedPositionsForTail();
+
+Console.ForegroundColor = ConsoleColor.White;
+Console.WriteLine($"Result 1: {resultd9e1}");
+Console.WriteLine($"Result 2: {resultd9e2}\n");
+#endregion
+
 Console.ReadLine();
