@@ -1,10 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AdventOfCode2024.Days;
+using AdventOfCode2024.Extensions;
 using System;
 using System.Diagnostics;
 
 Console.ForegroundColor = ConsoleColor.DarkRed;
-Console.WriteLine("Advent of Code 2024");
+ConsoleHelper.WriteFestive("Advent of Code 2024");
 AddChristmasTree();
 Console.ForegroundColor = ConsoleColor.White;
 Console.WriteLine("by Mirjam van Mourik\n");
@@ -21,7 +22,7 @@ static void GetAnswersAndPrintToConsole(IDay day)
     Stopwatch stopwatch = new();
 
     Console.ForegroundColor = ConsoleColor.DarkGreen;
-    Console.WriteLine($"Day {day.Day}");
+    ConsoleHelper.WriteFestive($"Day {day.Day}");
 
     stopwatch.Start();
     var result1 = day.GetFirstAnswer();
