@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AdventOfCode2024.Days;
 using AdventOfCode2024.Helpers;
-using System;
 using System.Diagnostics;
 
 Console.ForegroundColor = ConsoleColor.DarkRed;
