@@ -8,9 +8,9 @@ namespace AdventOfCode2024.Shared
 {
     public static class InputSplitter
     {
-        public static Dictionary<int, List<long>> Split(string input)
+        public static Dictionary<int, List<long>> SplitIntoDictionary(string input)
         {
-            var rows = input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+            var rows = SplitIntoRows(input);
 
             var dictionaryInput = new Dictionary<int, List<long>>
             {
@@ -20,7 +20,7 @@ namespace AdventOfCode2024.Shared
 
             foreach (var row in rows)
             {
-                var rowData = row.Split("   ", StringSplitOptions.RemoveEmptyEntries);
+                var rowData = row.Split(" ", StringSplitOptions.RemoveEmptyEntries);
                 var key1 = long.Parse(rowData[0]);
                 var key2 = long.Parse(rowData[1]);
 
@@ -29,6 +29,26 @@ namespace AdventOfCode2024.Shared
             }
 
             return dictionaryInput;
+        }
+
+        public static List<List<long>> SplitLines(string input)
+        {
+            var rows = SplitIntoRows(input);
+
+            var list = new List<List<long>>();
+
+            foreach (var row in rows)
+            {
+                var rowData = row.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
+                list.Add(rowData);
+            }
+
+            return list;
+        }
+
+        private static string[] SplitIntoRows(string input)
+        {
+            return input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }

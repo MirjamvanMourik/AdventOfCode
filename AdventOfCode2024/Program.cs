@@ -15,6 +15,11 @@ Console.WriteLine("by Mirjam van Mourik\n");
 GetAnswersAndPrintToConsole(new Day1());
 #endregion
 
+#region Day2
+// Day 2
+GetAnswersAndPrintToConsole(new Day2());
+#endregion
+
 Console.ReadLine();
 
 static void GetAnswersAndPrintToConsole(IDay day)
@@ -22,7 +27,7 @@ static void GetAnswersAndPrintToConsole(IDay day)
     Stopwatch stopwatch = new();
 
     Console.ForegroundColor = ConsoleColor.DarkGreen;
-    ConsoleHelper.WriteFestive($"Day {day.Day}");
+    ConsoleHelper.WriteFestive($"Day {day.Day} - {day.Title}");
 
     stopwatch.Start();
     var result1 = day.GetFirstAnswer();

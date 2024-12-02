@@ -11,10 +11,11 @@ namespace AdventOfCode2024.Days
     public class Day1 : IDay
     {
         long IDay.Day => 1;
+        string IDay.Title => "";
 
         public long GetFirstAnswer()
         {
-            var input = InputSplitter.Split(Day1LocationIds.Input);
+            var input = InputSplitter.SplitIntoDictionary(Day1LocationIds.Input);
 
             var totalAmount = 0L;
 
@@ -34,7 +35,7 @@ namespace AdventOfCode2024.Days
 
         public long GetSecondAnswer()
         {
-            var input = InputSplitter.Split(Day1LocationIds.Input);
+            var input = InputSplitter.SplitIntoDictionary(Day1LocationIds.Input);
 
             var totalAmount = 0L;
 
