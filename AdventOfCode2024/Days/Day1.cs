@@ -11,7 +11,7 @@ namespace AdventOfCode2024.Days
     public class Day1 : IDay
     {
         long IDay.Day => 1;
-        string IDay.Title => "";
+        string IDay.Title => "Historian Hysteria";
 
         public long GetFirstAnswer()
         {
