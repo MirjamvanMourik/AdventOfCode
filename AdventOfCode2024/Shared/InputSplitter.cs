@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AdventOfCode2024.Shared
@@ -44,6 +45,19 @@ namespace AdventOfCode2024.Shared
             }
 
             return list;
+        }
+
+        public static List<string> SplitMemory(string input, bool isFirst)
+        {
+            string firstPattern = @"mul\(\d{1,3},\d{1,3}\)";
+            string secondPattern = @"mul\(\d{1,3},\d{1,3}\)|do(?:n't)?\(\)";
+
+            var pattern = isFirst ? firstPattern : secondPattern;
+
+            return Regex.Matches(input, pattern)
+                .OfType<Match>()
+                .Select(m => m.Value)
+                .ToList();
         }
 
         private static string[] SplitIntoRows(string input)
