@@ -15,9 +15,6 @@ namespace AdventOfCode2024.Extras
         public Day4Vertex Left { get; set; }
         public Day4Vertex Down { get; set; }
 
-        public Day4Vertex(string letter)
-        {
-            Letter = letter;
-        }
+        public Day4Vertex(string letter) => Letter = letter;
     }
 }
