@@ -32,7 +32,7 @@ namespace AdventOfCode2024.Shared
             return dictionaryInput;
         }
 
-        public static List<List<long>> SplitLines(string input)
+        public static List<List<long>> SplitLinesToLong(string input)
         {
             var rows = SplitIntoRows(input);
 
@@ -42,6 +42,27 @@ namespace AdventOfCode2024.Shared
             {
                 var rowData = row.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(long.Parse).ToList();
                 list.Add(rowData);
+            }
+
+            return list;
+        }
+
+        public static List<List<string>> SplitLinesToString(string input)
+        {
+            var rows = SplitIntoRows(input);
+
+            var list = new List<List<string>>();
+
+            foreach (var row in rows)
+            {
+                var letters = new List<string>();
+
+                foreach(var letter in row)
+                {
+                    letters.Add(letter.ToString());
+                }
+                
+                list.Add(letters);
             }
 
             return list;

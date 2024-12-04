@@ -24,6 +24,11 @@ GetAnswersAndPrintToConsole(new Day2());
 GetAnswersAndPrintToConsole(new Day3());
 #endregion
 
+#region Day4
+// Day 4
+GetAnswersAndPrintToConsole(new Day4());
+#endregion
+
 Console.ReadLine();
 
 static void GetAnswersAndPrintToConsole(IDay day)

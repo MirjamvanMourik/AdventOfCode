@@ -15,13 +15,13 @@ namespace AdventOfCode2024.Days
 
         public long GetFirstAnswer()
         {
-            var input = InputSplitter.SplitLines(Day2Levels.Input);
+            var input = InputSplitter.SplitLinesToLong(Day2Levels.Input);
             return input.Count(CheckLevelSafety);
         }
 
         public long GetSecondAnswer()
         {
-            var input = InputSplitter.SplitLines(Day2Levels.Input);
+            var input = InputSplitter.SplitLinesToLong(Day2Levels.Input);
             long amountOfSafeReports = 0;
 
             foreach (var levels in input)
