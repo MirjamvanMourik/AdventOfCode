@@ -81,7 +81,7 @@ namespace AdventOfCode2024.Shared
                 .ToList();
         }
 
-        private static string[] SplitIntoRows(string input)
+        public static string[] SplitIntoRows(string input)
         {
             return input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
         }
