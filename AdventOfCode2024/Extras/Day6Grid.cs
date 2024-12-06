@@ -65,160 +65,51 @@
         public void WalkThePath()
         {
             var direction = InitialDirection;
-            var gotOffTheMap = false;
             var currentVertex = Guard;
+            var gotOffTheMap = false;
 
             while (!gotOffTheMap)
             {
-                switch (direction)
+                var nextVertex = GetNextVertex(currentVertex!, direction);
+                if (nextVertex == null)
                 {
-                    case "r":
-                        if (currentVertex?.Right != null)
-                        {
-                            if (currentVertex.Right.IsObstacle)
-                            {
-                                direction = TurnRightAndGetNewDirection(direction);
-                                currentVertex = currentVertex.Down;
+                    gotOffTheMap = true;
+                    continue;
+                }
 
-                                if (currentVertex != null)
-                                {
-                                    currentVertex.VisitVertex();
-                                }
-                                else
-                                {
-                                    gotOffTheMap = true;
-                                }
-                            }
-                            else
-                            {
-                                currentVertex = currentVertex.Right;
+                if (nextVertex.IsObstacle)
+                {
+                    direction = TurnRightAndGetNewDirection(direction);
+                    currentVertex = GetNextVertex(currentVertex!, direction);
+                }
+                else
+                {
+                    currentVertex = nextVertex;
+                }
 
-                                if (currentVertex != null)
-                                {
-                                    currentVertex.VisitVertex();
-                                }
-                                else
-                                {
-                                    gotOffTheMap = true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            gotOffTheMap = true;
-                        }
-                        break;
-                    case "l":
-                        if (currentVertex?.Left != null)
-                        {
-                            if (currentVertex.Left.IsObstacle)
-                            {
-                                direction = TurnRightAndGetNewDirection(direction);
-                                currentVertex = currentVertex.Up;
-
-                                if (currentVertex != null)
-                                {
-                                    currentVertex.VisitVertex();
-                                }
-                                else
-                                {
-                                    gotOffTheMap = true;
-                                }
-                            }
-                            else
-                            {
-                                currentVertex = currentVertex.Left;
-
-                                if (currentVertex != null)
-                                {
-                                    currentVertex.VisitVertex();
-                                }
-                                else
-                                {
-                                    gotOffTheMap = true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            gotOffTheMap = true;
-                        }
-                        break;
-                    case "u":
-                        if (currentVertex?.Up != null)
-                        {
-                            if (currentVertex.Up.IsObstacle)
-                            {
-                                direction = TurnRightAndGetNewDirection(direction);
-                                currentVertex = currentVertex.Right;
-
-                                if (currentVertex != null)
-                                {
-                                    currentVertex.VisitVertex();
-                                }
-                                else
-                                {
-                                    gotOffTheMap = true;
-                                }
-                            }
-                            else
-                            {
-                                currentVertex = currentVertex.Up;
-
-                                if (currentVertex != null)
-                                {
-                                    currentVertex.VisitVertex();
-                                }
-                                else
-                                {
-                                    gotOffTheMap = true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            gotOffTheMap = true;
-                        }
-                        break;
-                    default:
-                        if (currentVertex?.Down != null)
-                        {
-                            if (currentVertex.Down.IsObstacle)
-                            {
-                                direction = TurnRightAndGetNewDirection(direction);
-                                currentVertex = currentVertex.Left;
-
-                                if (currentVertex != null)
-                                {
-                                    currentVertex.VisitVertex();
-                                }
-                                else
-                                {
-                                    gotOffTheMap = true;
-                                }
-                            }
-                            else
-                            {
-                                currentVertex = currentVertex.Down;
-
-                                if (currentVertex != null)
-                                {
-                                    currentVertex.VisitVertex();
-                                }
-                                else
-                                {
-                                    gotOffTheMap = true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            gotOffTheMap = true;
-                        }
-                        break;
+                if (currentVertex != null)
+                {
+                    currentVertex.VisitVertex();
+                }
+                else
+                {
+                    gotOffTheMap = true;
                 }
             }
         }
+
+        private static Day6Vertex? GetNextVertex(Day6Vertex current, string direction)
+        {
+            return direction switch
+            {
+                "r" => current?.Right,
+                "l" => current?.Left,
+                "u" => current?.Up,
+                "d" => current?.Down,
+                _ => null
+            };
+        }
+
 
         public int CountVisitedLocations()
         {
