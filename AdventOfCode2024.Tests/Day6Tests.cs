@@ -10,6 +10,7 @@ namespace AdventOfCode2024.Tests
         public void SecondAnswerTest1()
         {
             var inputMap = @"....
+....
 #..#
 .^#.";
 
@@ -17,7 +18,7 @@ namespace AdventOfCode2024.Tests
 
             var grid = new Day6Grid();
             grid.CreateGrid(input);
-            var result = grid.LookForPossibleObstacles();
+            var result = grid.LookForPossibleObstacles(true);
 
             Assert.AreEqual(1, result);
         }
@@ -25,19 +26,19 @@ namespace AdventOfCode2024.Tests
         [TestMethod]
         public void SecondAnswerTest2()
         {
-            var inputMap = @".#................
-..#...............
-..................
-.^................
-..................";
+            var inputMap = @"
+.#..
+#.#.
+....
+.^..";
 
             var input = InputSplitter.SplitLinesToString(inputMap);
 
             var grid = new Day6Grid();
             grid.CreateGrid(input);
-            var result = grid.LookForPossibleObstacles();
+            var result = grid.LookForPossibleObstacles(true);
 
-            Assert.AreEqual(4, result);
+            Assert.AreEqual(1, result);
         }
     }
 }
