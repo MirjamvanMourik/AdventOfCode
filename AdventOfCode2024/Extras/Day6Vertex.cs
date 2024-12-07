@@ -4,6 +4,8 @@
     {
         public bool IsObstacle = false;
         public bool Visited = false;
+        public int Row = -1;
+        public int Col = -1;
 
         public Day6Vertex? Up { get; set; }
         public Day6Vertex? Right { get; set; }
@@ -13,6 +15,11 @@
         public void MarkAsObstacle()
         {
             IsObstacle = true;
+        }
+
+        public void RemoveAsObstacle()
+        {
+            IsObstacle = false;
         }
 
         public void VisitVertex()

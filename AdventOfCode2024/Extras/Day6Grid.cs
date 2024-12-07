@@ -22,7 +22,12 @@
             {
                 for (int col = 0; col < ColCount; col++)
                 {
-                    var vertex = new Day6Vertex();
+                    var vertex = new Day6Vertex
+                    {
+                        Row = row,
+                        Col = col
+                    };
+
                     var location = input[row][col];
 
                     if (location == "#")
@@ -96,6 +101,118 @@
                     gotOffTheMap = true;
                 }
             }
+        }
+
+        public int LookForPossibleObstacles()
+        {
+            var direction = InitialDirection;
+            var currentVertex = Guard;
+            var gotOffTheMap = false;
+            var states = new List<(Day6Vertex visitingState, string nextDirection)>();
+            var amountOfPossibleObstacles = 0;
+
+            while (!gotOffTheMap)
+            {
+                var nextVertex = GetNextVertex(currentVertex!, direction);
+                if (nextVertex == null)
+                {
+                    gotOffTheMap = true;
+                    continue;
+                }
+
+                if (nextVertex.IsObstacle)
+                {
+                    direction = TurnRightAndGetNewDirection(direction);
+                    states.Add((currentVertex!, direction));
+                    currentVertex = GetNextVertex(currentVertex!, direction);
+                }
+                else
+                {
+                    states.Add((currentVertex!, direction));
+
+                    nextVertex.MarkAsObstacle();
+
+                    var copyOfStates = new List<(Day6Vertex visitingState, string nextDirection)>();
+
+                    states.ForEach(state =>
+                    {
+                        copyOfStates.Add(state);
+                    });
+
+                    if (WalkThePathWithNewObstacle(currentVertex!, direction, copyOfStates))
+                    {
+                        amountOfPossibleObstacles++;
+                    }
+
+                    nextVertex.RemoveAsObstacle();
+
+                    currentVertex = nextVertex;
+                }
+
+                if (currentVertex != null)
+                {
+                    currentVertex.VisitVertex();
+                }
+                else
+                {
+                    gotOffTheMap = true;
+                }
+            }
+
+            return amountOfPossibleObstacles;
+        }
+
+        private static bool WalkThePathWithNewObstacle(Day6Vertex startingVertex, string startingDirection, List<(Day6Vertex visitingState, string nextDirection)> states)
+        {
+            var direction = startingDirection;
+            var currentVertex = startingVertex;
+            var gotOffTheMap = false;
+
+            while (!gotOffTheMap)
+            {
+                var nextVertex = GetNextVertex(currentVertex!, direction);
+                if (nextVertex == null)
+                {
+                    gotOffTheMap = true;
+                    continue;
+                }
+
+                if (nextVertex.IsObstacle)
+                {
+                    direction = TurnRightAndGetNewDirection(direction);
+
+                    if (states.Where(state => state.visitingState.Row == currentVertex!.Row
+                        && state.visitingState.Col == currentVertex.Col
+                        && state.nextDirection == direction).Any())
+                    {
+                        return true;
+                    }
+
+                    currentVertex = GetNextVertex(currentVertex!, direction);
+                }
+                else
+                {
+                    if (states.Where(state => state.visitingState.Row == currentVertex.Row
+                        && state.visitingState.Col == currentVertex.Col
+                        && state.nextDirection == direction).Any())
+                    {
+                        return true;
+                    }
+
+                    currentVertex = nextVertex;
+                }
+
+                if (currentVertex != null)
+                {
+                    currentVertex.VisitVertex();
+                }
+                else
+                {
+                    gotOffTheMap = true;
+                }
+            }
+
+            return false;
         }
 
         private static Day6Vertex? GetNextVertex(Day6Vertex current, string direction)

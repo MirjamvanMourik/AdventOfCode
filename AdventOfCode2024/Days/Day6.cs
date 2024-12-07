@@ -26,9 +26,7 @@ namespace AdventOfCode2024.Days
 
             var grid = new Day6Grid();
             grid.CreateGrid(input);
-            grid.WalkThePath();
-
-            return 0;
+            return grid.LookForPossibleObstacles();
         }
     }
 }
