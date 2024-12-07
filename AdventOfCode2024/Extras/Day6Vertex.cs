@@ -7,8 +7,18 @@
         public bool Visited = false;
         public bool IsPossibleObstacle = false;
         public bool IsCurrentPosition = false;
+
+
+        public bool SavedIsStartingPosition = false;
+        public bool SavedIsObstacle = false;
+        public bool SavedVisited = false;
+        public bool SavedIsPossibleObstacle = false;
+        public bool SavedIsCurrentPosition = false;
+
+
         public int Row = -1;
         public int Col = -1;
+
 
         public Day6Vertex? Up { get; set; }
         public Day6Vertex? Right { get; set; }
@@ -58,7 +68,29 @@
                 }
             }
 
+
             Console.Write(character);
+        }
+
+
+        public void Save()
+        {
+            SavedIsStartingPosition = IsStartingPosition;
+            SavedIsObstacle = IsObstacle;
+            SavedVisited = Visited;
+            SavedIsPossibleObstacle = IsPossibleObstacle;
+            SavedIsCurrentPosition = IsCurrentPosition;
+        }
+
+
+        public void Restore()
+        {
+            // Do the reverse
+            IsStartingPosition = SavedIsStartingPosition;
+            IsObstacle = SavedIsObstacle;
+            Visited = SavedVisited;
+            IsPossibleObstacle = SavedIsPossibleObstacle;
+            IsCurrentPosition = SavedIsCurrentPosition;
         }
     }
 }
