@@ -39,6 +39,7 @@
                         vertex.VisitVertex();
                         guardCol = col;
                         guardRow = row;
+                        vertex.IsStartingPosition = true;
 
                         InitialDirection = location switch
                         {
@@ -75,7 +76,10 @@
 
             while (!gotOffTheMap)
             {
-                var nextVertex = GetNextVertex(currentVertex!, direction);
+                var (newDirection, newPossibleVertex) = GetNextNonObstacleVertex(currentVertex!, direction);
+                direction = newDirection;
+                var nextVertex = newPossibleVertex;
+
                 if (nextVertex == null)
                 {
                     gotOffTheMap = true;
@@ -85,7 +89,10 @@
                 if (nextVertex.IsObstacle)
                 {
                     direction = TurnRightAndGetNewDirection(direction);
-                    currentVertex = GetNextVertex(currentVertex!, direction);
+
+                    var (newDirection2, newPossibleVertex2) = GetNextNonObstacleVertex(currentVertex!, direction);
+                    direction = newDirection2;
+                    currentVertex = newPossibleVertex2;
                 }
                 else
                 {
@@ -103,6 +110,19 @@
             }
         }
 
+        public void PrintGrid(bool withPossibleObstacles = false)
+        {
+            for (int row = 0; row < RowCount; row++)
+            {
+                for (int col = 0; col < ColCount; col++)
+                {
+                    Grid![row, col].Print(withPossibleObstacles);
+                }
+
+                Console.WriteLine();
+            }
+        }
+
         public int LookForPossibleObstacles()
         {
             var direction = InitialDirection;
@@ -111,11 +131,21 @@
             var states = new List<(Day6Vertex visitingState, string nextDirection)>();
             var amountOfPossibleObstacles = 0;
 
+            currentVertex.IsCurrentPosition = true;
+            PrintGrid();
+            Console.WriteLine();
+            currentVertex.IsCurrentPosition = false;
+
             while (!gotOffTheMap)
             {
-                var nextVertex = GetNextVertex(currentVertex!, direction);
+                var (newDirection, newPossibleVertex) = GetNextNonObstacleVertex(currentVertex!, direction);
+                direction = newDirection;
+                var nextVertex = newPossibleVertex;
+
                 if (nextVertex == null)
                 {
+                    Console.WriteLine("Got off the map");
+                    Console.WriteLine();
                     gotOffTheMap = true;
                     continue;
                 }
@@ -124,7 +154,12 @@
                 {
                     direction = TurnRightAndGetNewDirection(direction);
                     states.Add((currentVertex!, direction));
-                    currentVertex = GetNextVertex(currentVertex!, direction);
+
+
+                    var (newDirection2, newPossibleVertex2) = GetNextNonObstacleVertex(currentVertex!, direction);
+                    direction = newDirection2;
+                    currentVertex = newPossibleVertex2;
+
                 }
                 else
                 {
@@ -141,7 +176,11 @@
 
                     if (WalkThePathWithNewObstacle(currentVertex!, direction, copyOfStates))
                     {
-                        amountOfPossibleObstacles++;
+                        if (nextVertex.Row != Guard!.Row || nextVertex.Col != Guard.Col)
+                        {
+                            nextVertex.IsPossibleObstacle = true;
+                            amountOfPossibleObstacles++;
+                        }
                     }
 
                     nextVertex.RemoveAsObstacle();
@@ -155,24 +194,45 @@
                 }
                 else
                 {
+                    Console.WriteLine("Got off the map");
+                    Console.WriteLine();
                     gotOffTheMap = true;
                 }
+
+                currentVertex.IsCurrentPosition = true;
+                PrintGrid();
+                Console.WriteLine();
+                currentVertex.IsCurrentPosition = false;
             }
+
+            PrintGrid(true);
+            Console.WriteLine();
 
             return amountOfPossibleObstacles;
         }
 
-        private static bool WalkThePathWithNewObstacle(Day6Vertex startingVertex, string startingDirection, List<(Day6Vertex visitingState, string nextDirection)> states)
+        private bool WalkThePathWithNewObstacle(Day6Vertex startingVertex, string startingDirection, List<(Day6Vertex visitingState, string nextDirection)> states)
         {
             var direction = startingDirection;
             var currentVertex = startingVertex;
             var gotOffTheMap = false;
 
+            currentVertex.IsCurrentPosition = true;
+            PrintGrid();
+            Console.WriteLine();
+            currentVertex.IsCurrentPosition = false;
+
             while (!gotOffTheMap)
             {
-                var nextVertex = GetNextVertex(currentVertex!, direction);
+                var (newDirection, newPossibleVertex) = GetNextNonObstacleVertex(currentVertex!, direction);
+                direction = newDirection;
+
+                var nextVertex = newPossibleVertex;
+
                 if (nextVertex == null)
                 {
+                    Console.WriteLine("Got off the map");
+                    Console.WriteLine();
                     gotOffTheMap = true;
                     continue;
                 }
@@ -185,19 +245,29 @@
                         && state.visitingState.Col == currentVertex.Col
                         && state.nextDirection == direction).Any())
                     {
+                        Console.WriteLine("Stuck in loop");
+                        Console.WriteLine();
                         return true;
                     }
 
-                    currentVertex = GetNextVertex(currentVertex!, direction);
+                    states.Add((currentVertex!, direction));
+
+                    var (newDirection2, newPossibleVertex2) = GetNextNonObstacleVertex(currentVertex!, direction);
+                    direction = newDirection2;
+                    currentVertex = newPossibleVertex2;
                 }
                 else
                 {
-                    if (states.Where(state => state.visitingState.Row == currentVertex.Row
+                    if (states.Where(state => state.visitingState.Row == currentVertex!.Row
                         && state.visitingState.Col == currentVertex.Col
                         && state.nextDirection == direction).Any())
                     {
+                        Console.WriteLine("Stuck in loop");
+                        Console.WriteLine();
                         return true;
                     }
+
+                    states.Add((currentVertex!, direction));
 
                     currentVertex = nextVertex;
                 }
@@ -208,16 +278,25 @@
                 }
                 else
                 {
+                    Console.WriteLine("Got off the map");
+                    Console.WriteLine();
                     gotOffTheMap = true;
                 }
+
+                currentVertex.IsCurrentPosition = true;
+                PrintGrid();
+                Console.WriteLine();
+                currentVertex.IsCurrentPosition = false;
             }
 
             return false;
         }
 
-        private static Day6Vertex? GetNextVertex(Day6Vertex current, string direction)
+        private (string newDirection, Day6Vertex? newNonObstacleVertex) GetNextNonObstacleVertex(Day6Vertex current, string direction)
         {
-            return direction switch
+            var newDirection = direction;
+
+            var nextPossibleVertex = direction switch
             {
                 "r" => current?.Right,
                 "l" => current?.Left,
@@ -225,6 +304,14 @@
                 "d" => current?.Down,
                 _ => null
             };
+
+            if (nextPossibleVertex != null && nextPossibleVertex.IsObstacle)
+            {
+                newDirection = TurnRightAndGetNewDirection(direction);
+                return GetNextNonObstacleVertex(current!, newDirection);
+            }
+
+            return (newDirection, nextPossibleVertex);
         }
 
 

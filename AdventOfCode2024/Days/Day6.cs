@@ -22,7 +22,7 @@ namespace AdventOfCode2024.Days
 
         public long GetSecondAnswer()
         {
-            var input = InputSplitter.SplitLinesToString(Day6GuardMap.Example);
+            var input = InputSplitter.SplitLinesToString(Day6GuardMap.Input);
 
             var grid = new Day6Grid();
             grid.CreateGrid(input);
