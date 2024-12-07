@@ -85,7 +85,6 @@
 
         public void Restore()
         {
-            // Do the reverse
             IsStartingPosition = SavedIsStartingPosition;
             IsObstacle = SavedIsObstacle;
             Visited = SavedVisited;
