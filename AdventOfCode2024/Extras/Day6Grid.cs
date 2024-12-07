@@ -116,6 +116,7 @@
             {
                 for (int col = 0; col < ColCount; col++)
                 {
+
                     Grid![row, col].Print(withPossibleObstacles);
                 }
 
@@ -123,13 +124,31 @@
             }
         }
 
+        public int CountPossibleObstacles()
+        {
+            var possibleObstacles = 0;
+
+            for (int row = 0; row < RowCount; row++)
+            {
+                for (int col = 0; col < ColCount; col++)
+                {
+
+                    if (Grid![row, col].IsPossibleObstacle)
+                    {
+                        possibleObstacles++;
+                    }
+                }
+            }
+
+            return possibleObstacles;
+        }
+
         public int LookForPossibleObstacles(bool isTest = false)
         {
             var direction = InitialDirection;
             var currentVertex = Guard;
             var gotOffTheMap = false;
-            var states = new List<(Day6Vertex visitingState, string nextDirection)>();
-            var amountOfPossibleObstacles = 0;
+            var states = new List<(int row, int col, string nextDirection)>();
 
             if (isTest)
             {
@@ -161,8 +180,7 @@
                 if (nextVertex.IsObstacle)
                 {
                     direction = TurnRightAndGetNewDirection(direction);
-                    states.Add((currentVertex!, direction));
-
+                    states.Add((currentVertex!.Row, currentVertex.Col, direction));
 
                     var (newDirection2, newPossibleVertex2) = GetNextNonObstacleVertex(currentVertex!, direction, states);
                     direction = newDirection2;
@@ -171,15 +189,15 @@
                 }
                 else
                 {
-                    states.Add((currentVertex!, direction));
+                    states.Add((currentVertex!.Row, currentVertex.Col, direction));
 
                     nextVertex.MarkAsObstacle();
 
-                    var copyOfStates = new List<(Day6Vertex visitingState, string nextDirection)>();
+                    var copyOfStates = new List<(int row, int col, string nextDirection)>();
 
                     states.ForEach(state =>
                     {
-                        copyOfStates.Add(state);
+                        copyOfStates.Add((state.row, state.col, state.nextDirection));
                     });
 
                     if (WalkThePathWithNewObstacle(currentVertex!, direction, copyOfStates, isTest))
@@ -187,7 +205,6 @@
                         if (nextVertex.Row != Guard!.Row || nextVertex.Col != Guard.Col)
                         {
                             nextVertex.IsPossibleObstacle = true;
-                            amountOfPossibleObstacles++;
                         }
                     }
 
@@ -227,10 +244,10 @@
                 Console.WriteLine();
             }
 
-            return amountOfPossibleObstacles;
+            return CountPossibleObstacles();
         }
 
-        private bool WalkThePathWithNewObstacle(Day6Vertex startingVertex, string startingDirection, List<(Day6Vertex visitingState, string nextDirection)> states, bool isTest)
+        private bool WalkThePathWithNewObstacle(Day6Vertex startingVertex, string startingDirection, List<(int row, int col, string nextDirection)> states, bool isTest)
         {
             var direction = startingDirection;
             var currentVertex = startingVertex;
@@ -278,8 +295,8 @@
                 {
                     direction = TurnRightAndGetNewDirection(direction);
 
-                    if (states.Where(state => state.visitingState.Row == currentVertex!.Row
-                        && state.visitingState.Col == currentVertex.Col
+                    if (states.Where(state => state.row == currentVertex!.Row
+                        && state.col == currentVertex.Col
                         && state.nextDirection == direction).Any())
                     {
                         if (isTest)
@@ -291,7 +308,7 @@
                         return true;
                     }
 
-                    states.Add((currentVertex!, direction));
+                    states.Add((currentVertex!.Row, currentVertex.Col, direction));
 
                     var (newDirection2, newPossibleVertex2) = GetNextNonObstacleVertex(currentVertex!, direction, states);
 
@@ -341,7 +358,7 @@
             return false;
         }
 
-        private (string newDirection, Day6Vertex? newNonObstacleVertex) GetNextNonObstacleVertex(Day6Vertex currentVertex, string direction, List<(Day6Vertex visitingState, string nextDirection)>? states = null)
+        private (string newDirection, Day6Vertex? newNonObstacleVertex) GetNextNonObstacleVertex(Day6Vertex currentVertex, string direction, List<(int row, int col, string nextDirection)>? states = null)
         {
             var newDirection = direction;
 
@@ -360,14 +377,14 @@
 
                 if (states != null)
                 {
-                    if (states!.Where(state => state.visitingState.Row == currentVertex!.Row
-                            && state.visitingState.Col == currentVertex.Col
+                    if (states!.Where(state => state.row == currentVertex!.Row
+                            && state.col == currentVertex.Col
                             && state.nextDirection == newDirection).Any())
                     {
                         return ("stuck", null);
                     }
 
-                    states!.Add((currentVertex!, newDirection));
+                    states!.Add((currentVertex!.Row, currentVertex.Col, newDirection));
                 }
 
                 return GetNextNonObstacleVertex(currentVertex!, newDirection, states);
