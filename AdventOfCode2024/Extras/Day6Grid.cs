@@ -7,6 +7,7 @@
         private int ColCount = 0;
         private Day6Vertex? Guard { get; set; }
         private string InitialDirection = string.Empty;
+
         public void CreateGrid(List<List<string>> input)
         {
             RowCount = input.Count;
@@ -93,6 +94,7 @@
                 }
             }
         }
+
         public void PrintGrid(bool withPossibleObstacles = false)
         {
             for (int row = 0; row < RowCount; row++)
@@ -104,6 +106,7 @@
                 Console.WriteLine();
             }
         }
+
         public int LookForPossibleObstacles(bool isTest = false)
         {
             var direction = InitialDirection;
@@ -113,7 +116,7 @@
             var amountOfPossibleObstacles = 0;
             if (isTest)
             {
-                currentVertex.IsCurrentPosition = true;
+                currentVertex!.IsCurrentPosition = true;
                 PrintGrid();
                 Console.WriteLine();
                 currentVertex.IsCurrentPosition = false;
@@ -298,7 +301,7 @@
                 }
                 if (isTest)
                 {
-                    currentVertex.IsCurrentPosition = true;
+                    currentVertex!.IsCurrentPosition = true;
                     PrintGrid();
                     Console.WriteLine();
                     currentVertex.IsCurrentPosition = false;
@@ -306,6 +309,7 @@
             }
             return false;
         }
+
         private (string newDirection, Day6Vertex? newNonObstacleVertex) GetNextNonObstacleVertex(Day6Vertex currentVertex, string direction, List<(Day6Vertex visitingState, string nextDirection)>? states = null)
         {
             var newDirection = direction;
@@ -334,6 +338,7 @@
             }
             return (newDirection, nextPossibleVertex);
         }
+
         public int CountVisitedLocations()
         {
             var visitedLocationsAmount = 0;
@@ -349,6 +354,7 @@
             }
             return visitedLocationsAmount;
         }
+
         private static string TurnRightAndGetNewDirection(string direction)
         {
             if (direction == "u")
