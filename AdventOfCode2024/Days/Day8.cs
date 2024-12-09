@@ -19,9 +19,10 @@ namespace AdventOfCode2024.Days
 
         public long GetSecondAnswer()
         {
-            var input = InputSplitter.SplitIntoRows(Day8AntennaMap.Example);
+            var input = InputSplitter.SplitIntoRows(Day8AntennaMap.Input);
+            var frequencies = GetFrequenciesFromInput(input);
 
-            return 0;
+            return CreateAndCountAntiNodes(frequencies, input.Length - 1, input[0].Length - 1, true);
         }
 
         private static List<Day8Frequency> GetFrequenciesFromInput(string[] input)
@@ -33,13 +34,12 @@ namespace AdventOfCode2024.Days
                 .ToList();
         }
 
-        private static long CreateAndCountAntiNodes(List<Day8Frequency> frequencies, long maxY, long maxX, bool isTest = false)
+        private static long CreateAndCountAntiNodes(List<Day8Frequency> frequencies, long maxY, long maxX, bool isSecondPart = false, bool isTest = false)
         {
             var frequencyValueList = frequencies.GroupBy(f => f.frequencyValue)
                                                  .ToDictionary(g => g.Key, g => g.ToList());
 
             var possibleCombinations = CreatePossibleCombinations(frequencyValueList);
-
             var antiNodeLocations = new HashSet<(long x, long y)>();
 
             foreach (var combination in possibleCombinations)
@@ -47,8 +47,16 @@ namespace AdventOfCode2024.Days
                 var yDif = combination[0].Y - combination[1].Y;
                 var xDif = combination[0].X - combination[1].X;
 
-                AddAntiNode(antiNodeLocations, combination[0].X + xDif, combination[0].Y + yDif, maxX, maxY);
-                AddAntiNode(antiNodeLocations, combination[1].X - xDif, combination[1].Y - yDif, maxX, maxY);
+                AddAndTraverseAntiNodes(antiNodeLocations, combination[0].X + xDif, combination[0].Y + yDif, xDif, yDif, maxX, maxY, isSecondPart);
+                AddAndTraverseAntiNodes(antiNodeLocations, combination[1].X - xDif, combination[1].Y - yDif, -xDif, -yDif, maxX, maxY, isSecondPart);
+            }
+
+            if (isSecondPart)
+            {
+                foreach (var frequency in frequencies)
+                {
+                    AddAntiNode(antiNodeLocations, frequency.X, frequency.Y, maxX, maxY);
+                }
             }
 
             if (isTest)
@@ -59,11 +67,33 @@ namespace AdventOfCode2024.Days
             return antiNodeLocations.Count;
         }
 
+        private static void AddAndTraverseAntiNodes(
+            HashSet<(long x, long y)> antiNodeLocations,
+            long startX,
+            long startY,
+            long xStep,
+            long yStep,
+            long maxX,
+            long maxY,
+            bool traverse)
+        {
+            while (startX >= 0 && startX <= maxX && startY >= 0 && startY <= maxY)
+            {
+                AddAntiNode(antiNodeLocations, startX, startY, maxX, maxY);
+                if (!traverse) break;
+                startX += xStep;
+                startY += yStep;
+            }
+        }
+
         private static void AddAntiNode(HashSet<(long x, long y)> antiNodeLocations, long x, long y, long maxX, long maxY)
         {
             if (x >= 0 && x <= maxX && y >= 0 && y <= maxY)
             {
-                antiNodeLocations.Add((x, y));
+                if (!antiNodeLocations.Contains((x, y)))
+                {
+                    antiNodeLocations.Add((x, y));
+                }
             }
         }
 
