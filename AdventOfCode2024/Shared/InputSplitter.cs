@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using AdventOfCode2024.Extras;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace AdventOfCode2024.Shared
 {
@@ -46,6 +42,20 @@ namespace AdventOfCode2024.Shared
 
             return list;
         }
+        public static List<Day7Equation> SplitLinesToTestEquations(string input)
+        {
+            var rows = SplitIntoRows(input);
+            var testEquations = new List<Day7Equation>();
+
+            foreach (var row in rows)
+            {
+                var total = long.Parse(row.Split(":")[0]);
+                var numbers = row.Split(":")[1].Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(nr => long.Parse(nr)).ToList();
+                testEquations.Add(new Day7Equation() { Total = total, Numbers = numbers });
+            }
+
+            return testEquations;
+        }
 
         public static List<List<string>> SplitLinesToString(string input)
         {
@@ -57,11 +67,11 @@ namespace AdventOfCode2024.Shared
             {
                 var letters = new List<string>();
 
-                foreach(var letter in row)
+                foreach (var letter in row)
                 {
                     letters.Add(letter.ToString());
                 }
-                
+
                 list.Add(letters);
             }
 

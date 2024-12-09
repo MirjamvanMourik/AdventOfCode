@@ -9,35 +9,32 @@ ConsoleHelper.AddChristmasTree();
 Console.ForegroundColor = ConsoleColor.White;
 Console.WriteLine("by Mirjam van Mourik\n");
 
-#region Day1
-// Day 1
-GetAnswersAndPrintToConsole(new Day1());
-#endregion
+List<IDay> days = new()
+{
+    new Day1(),
+    new Day2(),
+    new Day3(),
+    new Day4(),
+    new Day5(),
+    new Day6(),
+    new Day7(),
+};
 
-#region Day2
-// Day 2
-GetAnswersAndPrintToConsole(new Day2());
-#endregion
+// True for testing the current day - false for complete overview
+var dayTesting = true;
 
-#region Day3
-// Day 3
-GetAnswersAndPrintToConsole(new Day3());
-#endregion
-
-#region Day4
-// Day 4
-GetAnswersAndPrintToConsole(new Day4());
-#endregion
-
-#region Day5
-// Day 5
-GetAnswersAndPrintToConsole(new Day5());
-#endregion
-
-#region Day6
-// Day 6
-GetAnswersAndPrintToConsole(new Day6());
-#endregion
+if (dayTesting)
+{
+    // For daytesting
+    GetAnswersAndPrintToConsole(days.Last());
+}
+else
+{
+    foreach (var day in days)
+    {
+        GetAnswersAndPrintToConsole(day);
+    }
+}
 
 Console.ReadLine();
 
