@@ -42,6 +42,7 @@ List<IDay> days = new()
     new Day7(),
     new Day8(),
     new Day9(),
+    new Day10(),
 };
 
 if (dayTesting)
