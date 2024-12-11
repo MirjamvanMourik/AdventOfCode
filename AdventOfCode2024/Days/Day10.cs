@@ -15,11 +15,9 @@ namespace AdventOfCode2024.Days
 
             var map = new Day10Map();
             map.CreateMap(input);
-
-            var startingPoints = map.GetAllStartingPoints();
             var totalScore = 0;
 
-            foreach (var point in startingPoints)
+            foreach (var point in map.StartingPoints)
             {
                 map.FindCompleteTrails(point, 0, map.HighestTrailHeight);
                 totalScore += point.EndOfTrailFromTrailhead.Count;
@@ -35,10 +33,9 @@ namespace AdventOfCode2024.Days
             var map = new Day10Map();
             map.CreateMap(input);
 
-            var startingPoints = map.GetAllStartingPoints();
             var totalScore = 0;
 
-            foreach (var point in startingPoints)
+            foreach (var point in map.StartingPoints)
             {
                 totalScore += map.FindCompleteTrailsPartTwo(point, 0, map.HighestTrailHeight);
             }

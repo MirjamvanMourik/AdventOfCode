@@ -4,6 +4,7 @@
     {
         public Day10Vertex[,]? Map { get; set; }
         public List<Day10Vertex> TrailHeads { get; set; } = new();
+        public List<Day10Vertex> StartingPoints { get; set; } = new();
 
         public int HighestTrailHeight { get; set; }
 
@@ -21,6 +22,11 @@
                 for (int col = 0; col < ColCount; col++)
                 {
                     var vertex = new Day10Vertex(int.Parse(input[row][col]), row, col);
+
+                    if (vertex.Height == 0)
+                    {
+                        StartingPoints.Add(vertex);
+                    }
 
                     if (vertex.Height > HighestTrailHeight)
                     {
@@ -62,7 +68,7 @@
                 return;
             }
 
-            foreach (var neighbor in GetNeighbors(currentVertex, currentNumber + 1))
+            foreach (var neighbor in GetNextCorrectHeight(currentVertex, currentNumber + 1))
             {
                 FindCompleteTrails(neighbor, currentNumber + 1, lastNumber, trailStart);
             }
@@ -82,7 +88,7 @@
 
             int total = 0;
 
-            foreach (var neighbor in GetNeighbors(startingVertex, currentNumber + 1))
+            foreach (var neighbor in GetNextCorrectHeight(startingVertex, currentNumber + 1))
             {
                 total += FindCompleteTrailsPartTwo(neighbor, currentNumber + 1, lastNumber);
             }
@@ -90,33 +96,12 @@
             return total;
         }
 
-        private IEnumerable<Day10Vertex?> GetNeighbors(Day10Vertex vertex, int requiredHeight)
+        private static IEnumerable<Day10Vertex?> GetNextCorrectHeight(Day10Vertex vertex, int requiredHeight)
         {
             if (vertex.Up?.Height == requiredHeight) yield return vertex.Up;
             if (vertex.Right?.Height == requiredHeight) yield return vertex.Right;
             if (vertex.Down?.Height == requiredHeight) yield return vertex.Down;
             if (vertex.Left?.Height == requiredHeight) yield return vertex.Left;
         }
-
-        public List<Day10Vertex> GetAllStartingPoints()
-        {
-            var startingPoints = new List<Day10Vertex>();
-
-            for (int row = 0; row < RowCount; row++)
-            {
-                for (int col = 0; col < ColCount; col++)
-                {
-                    var vertex = Map![row, col];
-
-                    if (vertex.Height == 0)
-                    {
-                        startingPoints.Add(vertex);
-                    }
-                }
-            }
-
-            return startingPoints;
-        }
-
     }
 }
