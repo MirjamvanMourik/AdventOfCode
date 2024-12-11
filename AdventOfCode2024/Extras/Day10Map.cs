@@ -5,6 +5,8 @@
         public Day10Vertex[,]? Map { get; set; }
         public List<Day10Vertex> TrailHeads { get; set; } = new();
 
+        public int HighestTrailHeight { get; set; }
+
         private int RowCount = 0;
         private int ColCount = 0;
 
@@ -19,6 +21,11 @@
                 for (int col = 0; col < ColCount; col++)
                 {
                     var vertex = new Day10Vertex(int.Parse(input[row][col]), row, col);
+
+                    if (vertex.Height > HighestTrailHeight)
+                    {
+                        HighestTrailHeight = vertex.Height;
+                    }
 
                     Map[row, col] = vertex;
                 }
@@ -36,43 +43,60 @@
             }
         }
 
-        public int FindCompleteTrails(Day10Vertex? startingVertex, int nextNumber, int lastNumber)
+        public void FindCompleteTrails(Day10Vertex? currentVertex, int currentNumber, int lastNumber, Day10Vertex? trailStart = null)
         {
-            if (startingVertex!.Height == lastNumber)
+            if (currentVertex == null)
             {
-                return 1;
+                return;
             }
 
-            if (startingVertex.Height < nextNumber)
+            trailStart ??= currentVertex;
+
+            if (currentVertex.Height == lastNumber && currentNumber == lastNumber)
+            {
+                var trailEnd = (currentVertex.Row, currentVertex.Col);
+                if (!trailStart.EndOfTrailFromTrailhead.Contains(trailEnd))
+                {
+                    trailStart.EndOfTrailFromTrailhead.Add(trailEnd);
+                }
+                return;
+            }
+
+            foreach (var neighbor in GetNeighbors(currentVertex, currentNumber + 1))
+            {
+                FindCompleteTrails(neighbor, currentNumber + 1, lastNumber, trailStart);
+            }
+        }
+
+        public int FindCompleteTrailsPartTwo(Day10Vertex? startingVertex, int currentNumber, int lastNumber)
+        {
+            if (startingVertex == null)
             {
                 return 0;
             }
 
+            if (startingVertex.Height == lastNumber)
+            {
+                return currentNumber == lastNumber ? 1 : 0;
+            }
+
             int total = 0;
 
-            if (startingVertex.Up != null)
+            foreach (var neighbor in GetNeighbors(startingVertex, currentNumber + 1))
             {
-                total += FindCompleteTrails(startingVertex.Up, nextNumber + 1, lastNumber);
-            }
-
-            if (startingVertex.Right != null)
-            {
-                total += FindCompleteTrails(startingVertex.Right, nextNumber + 1, lastNumber);
-            }
-
-            if (startingVertex.Down != null)
-            {
-                total += FindCompleteTrails(startingVertex.Down, nextNumber + 1, lastNumber);
-            }
-
-            if (startingVertex.Left != null)
-            {
-                total += FindCompleteTrails(startingVertex.Left, nextNumber + 1, lastNumber);
+                total += FindCompleteTrailsPartTwo(neighbor, currentNumber + 1, lastNumber);
             }
 
             return total;
         }
 
+        private IEnumerable<Day10Vertex?> GetNeighbors(Day10Vertex vertex, int requiredHeight)
+        {
+            if (vertex.Up?.Height == requiredHeight) yield return vertex.Up;
+            if (vertex.Right?.Height == requiredHeight) yield return vertex.Right;
+            if (vertex.Down?.Height == requiredHeight) yield return vertex.Down;
+            if (vertex.Left?.Height == requiredHeight) yield return vertex.Left;
+        }
 
         public List<Day10Vertex> GetAllStartingPoints()
         {
@@ -82,14 +106,17 @@
             {
                 for (int col = 0; col < ColCount; col++)
                 {
-                    if (Map![row, col].Height == 0)
+                    var vertex = Map![row, col];
+
+                    if (vertex.Height == 0)
                     {
-                        startingPoints.Add(Map[row, col]);
+                        startingPoints.Add(vertex);
                     }
                 }
             }
 
             return startingPoints;
         }
+
     }
 }

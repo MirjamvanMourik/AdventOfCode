@@ -3,8 +3,7 @@
     public class Day10Vertex
     {
         public int Height;
-        public int AmountOfTrails = 0;
-        public bool IsTrailhead => AmountOfTrails > 0;
+        public List<(int row, int col)> EndOfTrailFromTrailhead { get; set; } = new();
 
         public int Row = -1;
         public int Col = -1;

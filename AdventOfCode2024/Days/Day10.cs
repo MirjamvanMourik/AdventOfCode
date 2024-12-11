@@ -11,31 +11,39 @@ namespace AdventOfCode2024.Days
 
         public long GetFirstAnswer()
         {
-            var input = InputSplitter.SplitLinesToString(Day10TopographicMap.Example);
+            var input = InputSplitter.SplitLinesToString(Day10TopographicMap.Input);
 
             var map = new Day10Map();
             map.CreateMap(input);
 
             var startingPoints = map.GetAllStartingPoints();
-
-            var total = 0;
+            var totalScore = 0;
 
             foreach (var point in startingPoints)
             {
-                total += map.FindCompleteTrails(point, 1, 9);
+                map.FindCompleteTrails(point, 0, map.HighestTrailHeight);
+                totalScore += point.EndOfTrailFromTrailhead.Count;
             }
 
-            return total;
+            return totalScore;
         }
 
         public long GetSecondAnswer()
         {
-            var input = InputSplitter.SplitLinesToString(Day10TopographicMap.Example);
+            var input = InputSplitter.SplitLinesToString(Day10TopographicMap.Input);
 
             var map = new Day10Map();
             map.CreateMap(input);
 
-            return 0;
+            var startingPoints = map.GetAllStartingPoints();
+            var totalScore = 0;
+
+            foreach (var point in startingPoints)
+            {
+                totalScore += map.FindCompleteTrailsPartTwo(point, 0, map.HighestTrailHeight);
+            }
+
+            return totalScore;
         }
     }
 }
