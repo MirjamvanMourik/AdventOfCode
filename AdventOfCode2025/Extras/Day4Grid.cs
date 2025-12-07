@@ -10,16 +10,28 @@ namespace AdventOfCode2025.Extras
 
         public long FindAmountOfAccessiblePapers(List<List<string>> input, bool printGrid = false)
         {
-            CreateGrid(input);
+            if (Grid == null)
+            {
+                CreateGrid(input);
+            }
 
-            var totalPositions = 0L;
+            var toRemove = new List<Day4Position>();
 
             foreach (var pos in Grid!)
             {
                 if (pos.Value == Day4Value.Paper)
                 {
-                    totalPositions += pos.FindPaperAroundPosition() < 4 ? 1 : 0;
+                    var amount = pos.FindPaperAroundPosition();
+                    if (amount < 4)
+                    {
+                        toRemove.Add(pos);
+                    }
                 }
+            }
+
+            foreach (var pos in toRemove)
+            {
+                pos.Value = Day4Value.Empty;
             }
 
             if (printGrid)
@@ -27,7 +39,7 @@ namespace AdventOfCode2025.Extras
                 PrintGrid();
             }
 
-            return totalPositions;
+            return toRemove.Count;
         }
 
         public void CreateGrid(List<List<string>> input)
@@ -87,7 +99,6 @@ namespace AdventOfCode2025.Extras
                         }
                         else if (!string.IsNullOrEmpty(valStr))
                         {
-                            // Fallback: use first character of the value string
                             Console.ForegroundColor = consoleColor;
                             Console.Write(valStr[0]);
                         }

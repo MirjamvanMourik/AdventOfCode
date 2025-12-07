@@ -19,17 +19,17 @@ namespace AdventOfCode2025.Days
 
         public long GetSecondAnswer()
         {
-            var input = InputSplitter.SplitLinesToString(Day4Diagram.Example);
+            var input = InputSplitter.SplitLinesToString(Day4Diagram.Input);
             var total = 0L;
 
             var grid = new Day4Grid();
+            grid.CreateGrid(input);
 
-            var currentAmountFoud = long.MaxValue;
+            long currentAmountFound;
 
-            while (currentAmountFoud > 0)
+            while ((currentAmountFound = grid.FindAmountOfAccessiblePapers(input)) > 0)
             {
-                currentAmountFoud = grid.FindAmountOfAccessiblePapers(input);
-                total += currentAmountFoud;
+                total += currentAmountFound;
             }
 
             return total;

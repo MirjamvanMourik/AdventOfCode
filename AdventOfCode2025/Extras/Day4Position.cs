@@ -12,22 +12,16 @@
 
         public int FindPaperAroundPosition()
         {
-            var amount = new[]
-            {
-                Up,
-                Up?.Right,
-                Right,
-                Right?.Down,
-                Down,
-                Down?.Left,
-                Left,
-                Left?.Up
-            }.Count(p => p?.Value == Day4Value.Paper);
+            var amount = 0;
 
-            if (amount < 4)
-            {
-                Value = Day4Value.Empty;
-            }
+            if (Up != null && Up.Value == Day4Value.Paper) amount++;
+            if (Up?.Right != null && Up.Right.Value == Day4Value.Paper) amount++;
+            if (Right != null && Right.Value == Day4Value.Paper) amount++;
+            if (Right?.Down != null && Right.Down.Value == Day4Value.Paper) amount++;
+            if (Down != null && Down.Value == Day4Value.Paper) amount++;
+            if (Down?.Left != null && Down.Left.Value == Day4Value.Paper) amount++;
+            if (Left != null && Left.Value == Day4Value.Paper) amount++;
+            if (Left?.Up != null && Left.Up.Value == Day4Value.Paper) amount++;
 
             return amount;
         }
