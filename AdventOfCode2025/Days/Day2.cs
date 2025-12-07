@@ -47,7 +47,7 @@ namespace AdventOfCode2025.Days
 
         public long GetSecondAnswer()
         {
-            var input = InputSplitter.SplitBasedOnCharacter(Day2ProductIds.Example, ',');
+            var input = InputSplitter.SplitBasedOnCharacter(Day2ProductIds.Input, ',');
 
             var invalidIdsSum = 0L;
 
@@ -68,13 +68,14 @@ namespace AdventOfCode2025.Days
                     var valueAsString = i.ToString();
                     var length = valueAsString.Length;
 
-                    for (var j = 1; j <= length; j++)
+                    for (var j = 2; j <= length; j++)
                     {
                         if (length % j == 0)
                         {
                             var partLength = length / j;
                             var allPartsEqual = true;
-                            var firstPart = valueAsString.Substring(0, partLength);
+                            var firstPart = valueAsString[..partLength];
+
                             for (var k = 1; k < j; k++)
                             {
                                 var nextPart = valueAsString.Substring(k * partLength, partLength);
@@ -84,10 +85,11 @@ namespace AdventOfCode2025.Days
                                     break;
                                 }
                             }
+
                             if (allPartsEqual)
                             {
                                 //Console.WriteLine($"Invalid ID found: {valueAsString}");
-                                invalidIdsSum += long.Parse(valueAsString);
+                                invalidIdsSum += i;
                                 break;
                             }
                         }

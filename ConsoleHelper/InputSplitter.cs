@@ -69,6 +69,27 @@ namespace ConsoleHelper
             return list;
         }
 
+        public static List<List<int>> SplitLinesToInt(string input)
+        {
+            var rows = SplitIntoRows(input);
+
+            var list = new List<List<int>>();
+
+            foreach (var row in rows)
+            {
+                var letters = new List<int>();
+
+                foreach (var letter in row)
+                {
+                    letters.Add(int.Parse(letter.ToString()));
+                }
+
+                list.Add(letters);
+            }
+
+            return list;
+        }
+
         public static List<string> SplitMemory(string input, bool isFirst)
         {
             string firstPattern = @"mul\(\d{1,3},\d{1,3}\)";
