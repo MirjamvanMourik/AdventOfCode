@@ -10,7 +10,7 @@ namespace AdventOfCode2025.Days
 
         public long GetFirstAnswer()
         {
-            var banks = InputSplitter.SplitLinesToInt(Day0Base.Example);
+            var input = InputSplitter.SplitLinesToInt(Day0Base.Example);
 
             var total = 0L;
 
@@ -19,7 +19,7 @@ namespace AdventOfCode2025.Days
 
         public long GetSecondAnswer()
         {
-            var banks = InputSplitter.SplitLinesToInt(Day3JoltageRatings.Example);
+            var input = InputSplitter.SplitLinesToInt(Day3JoltageRatings.Example);
 
             var total = 0L;
 

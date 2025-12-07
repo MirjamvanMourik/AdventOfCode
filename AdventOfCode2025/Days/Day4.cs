@@ -1,4 +1,5 @@
-﻿using AdventOfCode2025.Input;
+﻿using AdventOfCode2025.Extras;
+using AdventOfCode2025.Input;
 using ConsoleHelper;
 
 namespace AdventOfCode2025.Days
@@ -6,24 +7,32 @@ namespace AdventOfCode2025.Days
     public class Day4 : IDay
     {
         long IDay.Day => 4;
-        string IDay.Title => "Lobby";
+        string IDay.Title => "Printing Department";
 
         public long GetFirstAnswer()
         {
-            var banks = InputSplitter.SplitLinesToInt(Day3JoltageRatings.Input);
+            var input = InputSplitter.SplitLinesToString(Day4Diagram.Input);
 
-            var total = 0L;
-
-            return 0;
+            var grid = new Day4Grid();
+            return grid.FindAmountOfAccessiblePapers(input);
         }
 
         public long GetSecondAnswer()
         {
-            var banks = InputSplitter.SplitLinesToInt(Day3JoltageRatings.Input);
-
+            var input = InputSplitter.SplitLinesToString(Day4Diagram.Example);
             var total = 0L;
 
-            return 0;
+            var grid = new Day4Grid();
+
+            var currentAmountFoud = long.MaxValue;
+
+            while (currentAmountFoud > 0)
+            {
+                currentAmountFoud = grid.FindAmountOfAccessiblePapers(input);
+                total += currentAmountFoud;
+            }
+
+            return total;
         }
     }
 }
