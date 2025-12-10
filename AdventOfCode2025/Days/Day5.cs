@@ -19,7 +19,7 @@ namespace AdventOfCode2025.Days
 
             var freshIngredienstAmount = 0L;
 
-            foreach (var id in ids.Distinct())
+            foreach (var id in ids.Distinct().Order())
             {
                 foreach (var range in ranges)
                 {
@@ -36,59 +36,42 @@ namespace AdventOfCode2025.Days
 
         public long GetSecondAnswer()
         {
-            var rows = InputSplitter.SplitIntoRows(Day5Database.Example);
+            var rows = InputSplitter.SplitIntoRows(Day5Database.Input);
 
-            (var ranges, var ids) = ConvertToIngredientIds(rows);
+            (var ranges, var _) = ConvertToIngredientIds(rows, true);
 
-            ranges = CompareAndSortRanges(ranges);
+            var merged = CompareAndSortRanges(ranges);
 
-            var freshRangeIds = new List<long>();
-
-            foreach (var id in ids.Distinct())
+            long total = 0;
+            foreach (var r in merged)
             {
-                foreach (var range in ranges)
-                {
-                    if (id >= range.Start && id <= range.End)
-                    {
-                        for (var rangeId = range.Start; rangeId <= range.End; rangeId++)
-                        {
-                            if (!freshRangeIds.Contains(rangeId))
-                            {
-                                freshRangeIds.Add(rangeId);
-                            }
-                        }
-                        break;
-                    }
-                }
+                total += (r.End - r.Start + 1);
             }
 
-            return freshRangeIds.Count;
+            return total;
         }
 
-        private static (List<Day5Range>, HashSet<long>) ConvertToIngredientIds(string[] rows)
+        private static (List<Day5Range>, HashSet<long>) ConvertToIngredientIds(string[] rows, bool withoutIds = false)
         {
             var ranges = new List<Day5Range>();
             var ids = new HashSet<long>();
-            var areIds = false;
 
             foreach (var row in rows)
             {
-                if (!areIds && !row.Contains('-'))
+                if (row.Contains('-'))
                 {
-                    areIds = true;
-                }
-
-                if (areIds)
-                {
-                    ids.Add(long.Parse(row));
+                    var rowParts = row.Split('-');
+                    var range = new Day5Range(long.Parse(rowParts[0]), long.Parse(rowParts[1]));
+                    ranges.Add(range);
                     continue;
                 }
 
-                var rowParts = row.Split('-');
+                if (withoutIds)
+                {
+                    continue;
+                }
 
-                var range = new Day5Range(long.Parse(rowParts[0]), long.Parse(rowParts[1]));
-
-                ranges.Add(range);
+                ids.Add(long.Parse(row));
             }
 
             return (ranges, ids);
@@ -105,34 +88,16 @@ namespace AdventOfCode2025.Days
 
                 switch (comparison)
                 {
-                    case -1:
-                        // otherRange is fully contained within range - keep range
-                        ranges.RemoveAt(i + 1);
-                        rangesCount--;
-                        i--;
-                        break;
                     case 1:
-                        // otherRange overlaps the end of range - start range, end otherRange
-                        ranges[i].End = ranges[i + 1].End;
+                        // overlap
+                        ranges[i].Start = Math.Min(ranges[i].Start, ranges[i + 1].Start);
+                        ranges[i].End = Math.Max(ranges[i].End, ranges[i + 1].End);
                         ranges.RemoveAt(i + 1);
                         rangesCount--;
-                        i--;
-                        break;
-                    case 2:
-                        // otherRange overlaps the start of range - start otherRange, end range
-                        ranges[i].Start = ranges[i + 1].Start;
-                        ranges.RemoveAt(i + 1);
-                        rangesCount--;
-                        i--;
-                        break;
-                    case 3:
-                        // range is fully contained within otherRange - keep otherRange
-                        rangesCount--;
-                        ranges.RemoveAt(i);
                         i--;
                         break;
                     default:
-                        // No overlap - keep both
+                        // No overlap
                         break;
                 }
             }

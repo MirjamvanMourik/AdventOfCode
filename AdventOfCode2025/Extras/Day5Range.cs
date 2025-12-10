@@ -8,30 +8,15 @@
 
     public static class Day5RangeExtensions
     {
+        /// <summary>
+        /// Return 1 for any overlap (inclusive endpoints), -1 for no overlap.
+        /// </summary>
         public static int CompareTo(this Day5Range range, Day5Range otherRange)
         {
-            // -1: otherRange is fully contained within range - keep range
-            if (otherRange.Start >= range.Start && otherRange.End <= range.End)
-            {
-                return -1;
-            }
-            // 1: otherRange overlaps the end of range - start range, end otherRange
-            else if (otherRange.Start >= range.Start && otherRange.Start <= range.End && otherRange.End > range.End)
-            {
-                return 1;
-            }
-            // 2: otherRange overlaps the start of range - start otherRange, end range
-            else if (otherRange.Start < range.Start && otherRange.End >= range.Start && otherRange.End <= range.End)
-            {
-                return 2;
-            }
-            // 3: range is fully contained within otherRange - keep otherRange
-            else if (otherRange.Start < range.Start && otherRange.End > range.End)
-            {
-                return 3;
-            }
+            long s1 = range.Start, e1 = range.End;
+            long s2 = otherRange.Start, e2 = otherRange.End;
 
-            return 0; // No overlap - keep both
+            return (e1 < s2 || e2 < s1) ? -1 : 1;
         }
     }
 }

@@ -2,11 +2,13 @@
 {
     public static class Day5Database
     {
+        // Part 1: 3 - Part 2: 16
         public static readonly string Example = @"
 3-5
 10-14
 16-20
 12-18
+9-21
 
 1
 5
