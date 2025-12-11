@@ -69,6 +69,22 @@ namespace ConsoleHelper
             return list;
         }
 
+        public static List<string[]> SplitLinesSeperatedBySpaces(string input)
+        {
+            var rows = SplitIntoRows(input);
+
+            var list = new List<string[]>();
+
+            foreach (var row in rows)
+            {
+                var rowData = row.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+
+                list.Add(rowData);
+            }
+
+            return list;
+        }
+
         public static List<List<int>> SplitLinesToInt(string input)
         {
             var rows = SplitIntoRows(input);
